@@ -7,6 +7,10 @@ author 'TaerAttO'
 version 'v1.0.0'
 url 'https://discord.gg/taeratto'
 
+shared_scripts {
+	"@es_extended/imports.lua"
+}
+
 server_scripts {
 	'@es_extended/locale.lua',
 	'@mysql-async/lib/MySQL.lua',
@@ -26,8 +30,7 @@ dependencies {
 	'es_extended',
 	'esx_addonaccount',
 	'esx_addoninventory',
-	'esx_datastore',
-	'mythic_notify'
+	'esx_datastore'
 }
 
 exports {

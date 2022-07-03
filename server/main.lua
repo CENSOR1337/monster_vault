@@ -1,7 +1,3 @@
-ESX = nil
-
-TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
-
 RegisterServerEvent('monster_vault:getItem')
 AddEventHandler('monster_vault:getItem', function(--[[owner,--]] job, type, item, count)
 	local _source      = source
@@ -16,17 +12,17 @@ AddEventHandler('monster_vault:getItem', function(--[[owner,--]] job, type, item
 			TriggerEvent('esx_addoninventory:getSharedInventory', 'society_'..job, function(inventory)
 				local inventoryItem = inventory.getItem(item)
 				if count > 0 and inventoryItem.count >= count then
-					if sourceItem.limit ~= -1 and (sourceItem.count + count) > sourceItem.limit then
+					if  not (xPlayer.canCarryItem(item, count)) then
 						print('notify: player cannot hold')
-						TriggerClientEvent('mythic_notify:client:SendAlert', _source, {type = 'error', text = _U('player_cannot_hold'), length = 5500})
+						TriggerClientEvent('monster_vault:notifications', _source, {type = 'error', text = _U('player_cannot_hold'), length = 5500})
 					else
 						inventory.removeItem(item, count)
 						xPlayer.addInventoryItem(item, count)
-						TriggerClientEvent('mythic_notify:client:SendAlert', _source, {type = 'success', text = _U('have_withdrawn', count, inventoryItem.label), length = 7500})
+						TriggerClientEvent('monster_vault:notifications', _source, {type = 'success', text = _U('have_withdrawn', count, inventoryItem.label), length = 7500})
 					end
 				else
 					print('not enough in vault')
-					TriggerClientEvent('mythic_notify:client:SendAlert', _source, {type = 'error', text = _U('not_enough_in_vault'), length = 5500})
+					TriggerClientEvent('monster_vault:notifications', _source, {type = 'error', text = _U('not_enough_in_vault'), length = 5500})
 				end
 			end)
 		elseif job == 'vault' then
@@ -35,15 +31,15 @@ AddEventHandler('monster_vault:getItem', function(--[[owner,--]] job, type, item
 	
 				
 				if count > 0 and inventoryItem.count >= count then
-					if sourceItem.limit ~= -1 and (sourceItem.count + count) > sourceItem.limit then
-						TriggerClientEvent('mythic_notify:client:SendAlert', _source,  {type = 'error', text = _U('player_cannot_hold'), length = 5500})
+					if not (xPlayer.canCarryItem(item, count)) then
+						TriggerClientEvent('monster_vault:notifications', _source,  {type = 'error', text = _U('player_cannot_hold'), length = 5500})
 					else
 						inventory.removeItem(item, count)
 						xPlayer.addInventoryItem(item, count)
-						TriggerClientEvent('mythic_notify:client:SendAlert', _source, {type = 'success', text = _U('have_withdrawn', count, inventoryItem.label), length = 8500})
+						TriggerClientEvent('monster_vault:notifications', _source, {type = 'success', text = _U('have_withdrawn', count, inventoryItem.label), length = 8500})
 					end
 				else
-					TriggerClientEvent('mythic_notify:client:SendAlert', _source, {type = 'error', text = _U('not_enough_in_vault'), length = 5500})
+					TriggerClientEvent('monster_vault:notifications', _source, {type = 'error', text = _U('not_enough_in_vault'), length = 5500})
 				end
 			end)
 		else
@@ -59,7 +55,7 @@ AddEventHandler('monster_vault:getItem', function(--[[owner,--]] job, type, item
 					account.removeMoney(count)
 					xPlayer.addAccountMoney(item, count)
 				else
-					TriggerClientEvent('mythic_notify:client:SendAlert', _source, {type = 'error', text = _U('amount_invalid'), length = 5500})
+					TriggerClientEvent('monster_vault:notifications', _source, {type = 'error', text = _U('amount_invalid'), length = 5500})
 				end
 			end)
 		elseif job == 'vault' then
@@ -70,11 +66,11 @@ AddEventHandler('monster_vault:getItem', function(--[[owner,--]] job, type, item
 					account.removeMoney(count)
 					xPlayer.addAccountMoney(item, count)
 				else
-					TriggerClientEvent('mythic_notify:client:SendAlert', _source, {type = 'error', text = _U('amount_invalid'), length = 5500})
+					TriggerClientEvent('monster_vault:notifications', _source, {type = 'error', text = _U('amount_invalid'), length = 5500})
 				end
 			end)
 		else
-			TriggerClientEvent('mythic_notify:client:SendAlert', _source, {type = 'error', text = "You not have permission", length = 5500})
+			TriggerClientEvent('monster_vault:notifications', _source, {type = 'error', text = "You not have permission", length = 5500})
 		end
 	elseif type == 'item_weapon' then
 		if xPlayer.job.name == job then
@@ -116,7 +112,7 @@ AddEventHandler('monster_vault:getItem', function(--[[owner,--]] job, type, item
 				xPlayer.addWeapon(weaponName, ammo)
 			end)
 		else
-			TriggerClientEvent('mythic_notify:client:SendAlert', _source, {type = 'error', text = 'You not have permission', length = 5500})
+			TriggerClientEvent('monster_vault:notifications', _source, {type = 'error', text = 'You not have permission', length = 5500})
 		end
 	end
 
@@ -137,20 +133,20 @@ AddEventHandler('monster_vault:putItem', function(--[[owner,--]] job, type, item
 				TriggerEvent('esx_addoninventory:getSharedInventory', 'society_'..job, function(inventory)
 					xPlayer.removeInventoryItem(item, count)
 					inventory.addItem(item, count)
-					TriggerClientEvent('mythic_notify:client:SendAlert', _source, {type = 'success', text = _U('have_deposited', count, inventory.getItem(item).label), length = 7500})
+					TriggerClientEvent('monster_vault:notifications', _source, {type = 'success', text = _U('have_deposited', count, inventory.getItem(item).label), length = 7500})
 				end)
 				-- print("monster_vault:putItem")
 			elseif job == 'vault' then
 				TriggerEvent('esx_addoninventory:getInventory', 'vault', xPlayerOwner.identifier, function(inventory)
 					xPlayer.removeInventoryItem(item, count)
 					inventory.addItem(item, count)
-					TriggerClientEvent('mythic_notify:client:SendAlert', _source, {type = 'success', text = _U('have_deposited', count, inventory.getItem(item).label), length = 7500})
+					TriggerClientEvent('monster_vault:notifications', _source, {type = 'success', text = _U('have_deposited', count, inventory.getItem(item).label), length = 7500})
 				end)
 			else
-				TriggerClientEvent('mythic_notify:client:SendAlert', _source, {type = "error", text = 'You not have permission for this job!', length = 5500})
+				TriggerClientEvent('monster_vault:notifications', _source, {type = "error", text = 'You not have permission for this job!', length = 5500})
 			end
 		else
-			TriggerClientEvent('mythic_notify:client:SendAlert', _source, {type = "error", text = _U('invalid_quantity'), length = 5500})
+			TriggerClientEvent('monster_vault:notifications', _source, {type = "error", text = _U('invalid_quantity'), length = 5500})
 		end
 
 	elseif type == 'item_account' then
@@ -169,11 +165,11 @@ AddEventHandler('monster_vault:putItem', function(--[[owner,--]] job, type, item
 				end)
 			else
 				xPlayer.addAccountMoney(item, count)
-				TriggerClientEvent('mythic_notify:client:SendAlert', _source, {type = 'error', text = 'This job not allow for black money', length = 5500})
+				TriggerClientEvent('monster_vault:notifications', _source, {type = 'error', text = 'This job not allow for black money', length = 5500})
 			end
 			
 		else
-			TriggerClientEvent('mythic_notify:client:SendAlert', _source, {type = 'error', text = _U('amount_invalid'), length = 5500})
+			TriggerClientEvent('monster_vault:notifications', _source, {type = 'error', text = _U('amount_invalid'), length = 5500})
 		end
 
 	elseif type == 'item_weapon' then
@@ -204,7 +200,7 @@ AddEventHandler('monster_vault:putItem', function(--[[owner,--]] job, type, item
 				
 			end)
 		else
-			TriggerClientEvent('mythic_notify:client:SendAlert', _source, {type = 'error', text = 'You not have permission', length = 5500})
+			TriggerClientEvent('monster_vault:notifications', _source, {type = 'error', text = 'You not have permission', length = 5500})
 		end
 	end
 

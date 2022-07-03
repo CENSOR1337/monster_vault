@@ -10,22 +10,13 @@ local Keys = {
   ["NENTER"] = 201, ["N4"] = 108, ["N5"] = 60, ["N6"] = 107, ["N+"] = 96, ["N-"] = 97, ["N7"] = 117, ["N8"] = 61, ["N9"] = 118
 }
 
-ESX                           = nil
-
-
-Citizen.CreateThread(function()
-	while ESX == nil do
-		TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
-		Citizen.Wait(0)
-	end
-end)
-
 RegisterNetEvent('esx:playerLoaded')
 AddEventHandler('esx:playerLoaded', function(xPlayer)
 	ESX.PlayerData = xPlayer
 end)
 
 local vaultType = {}
+local CreatedEntities = {}
 
 RegisterNetEvent('esx:setJob')
 AddEventHandler('esx:setJob', function(job)
@@ -63,6 +54,7 @@ Citizen.CreateThread(function()
 			SetEntityHeading(obj, v.heading)
 			PlaceObjectOnGroundProperly(obj)
 			FreezeEntityPosition(obj, true)
+            table.insert(CreatedEntities, obj)
 		end)
 	end
     
@@ -92,3 +84,13 @@ end)
 function getMonsterVaultLicense()
 	return vaultType
 end
+
+AddEventHandler("onResourceStop", function(resource)
+    if resource == GetCurrentResourceName() then
+        for k, v in pairs(CreatedEntities) do
+            DeleteEntity(v)
+        end
+    end
+end)
+
+RegisterNetEvent("monster_vault:notifications", Config.ClientNotification)

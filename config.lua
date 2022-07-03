@@ -4,8 +4,8 @@ Config.Locale                 = 'en'
 Config.VaultBox = 'p_v_43_safe_s'
 Config.Vault = {
 	vault = {
-		coords = vector3(217.89, -799.96, 29.77),
-		heading = 247.81,
+		coords = vector3(1732.1887, 3314.7129, 41.2235),
+		heading = 197.3661,
 		needItemLicense = 'taeratto_blackcard', --'licence_vault' -- If you don't want to use items Allow you to leave it blank or needItemLicense = nil
 		InfiniteLicense = true -- Should one License last forever?
 	},
@@ -22,3 +22,7 @@ Config.Vault = {
 		heading = 70.07,
 	}
 }
+
+Config.ClientNotification = function(data) -- {type = 'error', text = _U('player_cannot_hold'), length = 5500}
+	TriggerEvent("esx:showNotification", data.text)
+end
