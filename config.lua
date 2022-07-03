@@ -1,25 +1,25 @@
-Config                        = {}
-Config.Locale                 = 'en'
+Config = {}
+Config.Locale = "en"
 
-Config.VaultBox = 'p_v_43_safe_s'
+Config.VaultBox = "p_v_43_safe_s"
 Config.Vault = {
-	vault = {
-		coords = vector3(1732.1887, 3314.7129, 41.2235),
-		heading = 197.3661,
-		needItemLicense = 'taeratto_blackcard', --'licence_vault' -- If you don't want to use items Allow you to leave it blank or needItemLicense = nil
+	{
+		type = "vault",
+		coords = vec(1732.1887, 3314.7129, 41.2235, 0.0),
+		needItemLicense = "taeratto_blackcard", --'licence_vault' -- If you don't want to use items Allow you to leave it blank or needItemLicense = nil
 		InfiniteLicense = true -- Should one License last forever?
 	},
-	police = {
-		coords = vector3(219.06, -797.20, 29.75),
-		heading = 246.09,
+	{
+		type = "police",
+		coords = vec(219.06, -797.20, 29.75, 0.0),
 	},
-	ambulance = {
-		coords = vector3(216.62, -802.72, 29.79),
-		heading = 246.09,
+	{
+		type = "ambulance",
+		coords = vec(216.62, -802.72, 29.79, 0.0),
 	},
-	mechanic = {
-		coords = vector3(207.83, -798.57, 29.97),
-		heading = 70.07,
+	{
+		type = "mechanic",
+		coords = vec(207.83, -798.57, 29.97, 0.0),
 	}
 }
 

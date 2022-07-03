@@ -132,17 +132,19 @@ AddEventHandler("monster_vault:getItem", function(--[[owner,--]] job, type, item
 
 end)
 
-RegisterServerEvent("monster_vault:putItem")
-AddEventHandler("monster_vault:putItem", function(--[[owner,--]] job, type, item, count)
+RegisterNetEvent("monster_vault:putItem", function(--[[owner,--]] job, type, item, count)
 	local _source = source
 	if not (Config.ServerIsVaultable(_source, type, item, count)) then
+		TriggerClientEvent("monster_vault:notifications", _source, { type = "error", text = _U("item_is_not_vaultable"), length = 5500 })
 		return
 	end
 	local xPlayer = ESX.GetPlayerFromId(_source)
 	local xPlayerOwner = ESX.GetPlayerFromIdentifier(xPlayer.identifier)
 	if (Blacklisted[type] and Blacklisted[type][item]) then
+		TriggerClientEvent("monster_vault:notifications", _source, { type = "error", text = _U("item_on_blacklisted"), length = 5500 })
 		return
 	end
+
 	if type == "item_standard" then
 		local playerItemCount = xPlayer.getInventoryItem(item).count
 

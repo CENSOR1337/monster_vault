@@ -48,16 +48,14 @@ Citizen.CreateThread(function()
     while ESX == nil or ESX.PlayerData == nil or ESX.PlayerData.job == nil do
         Citizen.Wait(1000)
     end
-    print('Object Vault Working')
-    for k,v in pairs(Config.Vault) do
+    for _,v in pairs(Config.Vault) do
 		ESX.Game.SpawnLocalObject(Config.VaultBox, v.coords, function(obj)
-			SetEntityHeading(obj, v.heading)
+			SetEntityHeading(obj, v.coords.w)
 			PlaceObjectOnGroundProperly(obj)
 			FreezeEntityPosition(obj, true)
             table.insert(CreatedEntities, obj)
 		end)
 	end
-    
 end)
 
 -- Key controls
@@ -65,13 +63,13 @@ Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(0)
 		local coords = GetEntityCoords(PlayerPedId())
-		for k,v in pairs(Config.Vault) do
+		for _,v in pairs(Config.Vault) do
 			local dist = GetDistanceBetweenCoords(coords, v.coords, true)
 			if dist < 2 then
-				ESX.ShowHelpNotification("Press E to "..k)
+				ESX.ShowHelpNotification("Press E to open vault")
 				
 				if IsControlJustReleased(0, Keys['E']) then
-					OpenVaultInventoryMenu({job = k, needItemLicense = v.needItemLicense, InfiniteLicense = v.InfiniteLicense})
+					OpenVaultInventoryMenu({job = v.type, needItemLicense = v.needItemLicense, InfiniteLicense = v.InfiniteLicense})
 				else
 					break
 				end
