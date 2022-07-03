@@ -23,6 +23,16 @@ Config.Vault = {
 	}
 }
 
+Config.Blacklisted = {
+	item_standard = { "phone" },
+	item_account = { "money" },
+	item_weapon = { "WEAPON_PISTOL" },
+}
+
 Config.ClientNotification = function(data) -- {type = 'error', text = _U('player_cannot_hold'), length = 5500}
 	TriggerEvent("esx:showNotification", data.text)
+end
+
+Config.ServerIsVaultable = function(source, type, item, count)
+	return true
 end
