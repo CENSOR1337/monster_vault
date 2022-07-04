@@ -1,25 +1,28 @@
 Config = {}
 Config.Locale = "en"
 
-Config.VaultBox = "p_v_43_safe_s"
 Config.Vault = {
 	{
 		type = "vault",
-		coords = vec(1732.1887, 3314.7129, 41.2235, 0.0),
+		coords = vec(1732.7111, 3313.9900, 40.2235, 16.7298),
 		needItemLicense = "taeratto_blackcard", --'licence_vault' -- If you don't want to use items Allow you to leave it blank or needItemLicense = nil
-		InfiniteLicense = true -- Should one License last forever?
+		InfiniteLicense = true, -- Should one License last forever?
+		model = "p_v_43_safe_s"
 	},
 	{
 		type = "police",
 		coords = vec(219.06, -797.20, 29.75, 0.0),
+		model = "p_v_43_safe_s"
 	},
 	{
 		type = "ambulance",
 		coords = vec(216.62, -802.72, 29.79, 0.0),
+		model = "p_v_43_safe_s"
 	},
 	{
 		type = "mechanic",
 		coords = vec(207.83, -798.57, 29.97, 0.0),
+		model = "p_v_43_safe_s"
 	}
 }
 

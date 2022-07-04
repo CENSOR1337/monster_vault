@@ -49,7 +49,7 @@ Citizen.CreateThread(function()
 		Citizen.Wait(1000)
 	end
 	for _, v in pairs(Config.Vault) do
-		ESX.Game.SpawnLocalObject(Config.VaultBox, v.coords, function(obj)
+		ESX.Game.SpawnLocalObject(v.model, v.coords, function(obj)
 			SetEntityHeading(obj, v.coords.w)
 			FreezeEntityPosition(obj, true)
 			table.insert(CreatedEntities, obj)
