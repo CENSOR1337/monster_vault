@@ -1,6 +1,6 @@
 fx_version 'adamant'
 game 'gta5'
-
+lua54 "yes"
 name 'Monster Vault'
 description 'An Vault script built for Monster ESX Framework - A Monster ESX Framework built for MonsterSrRP NOHD Nightmare'
 author 'TaerAttO'

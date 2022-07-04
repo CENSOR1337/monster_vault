@@ -51,7 +51,6 @@ Citizen.CreateThread(function()
     for _,v in pairs(Config.Vault) do
 		ESX.Game.SpawnLocalObject(Config.VaultBox, v.coords, function(obj)
 			SetEntityHeading(obj, v.coords.w)
-			PlaceObjectOnGroundProperly(obj)
 			FreezeEntityPosition(obj, true)
             table.insert(CreatedEntities, obj)
 		end)
