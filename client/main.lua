@@ -25,21 +25,46 @@ end)
 
 function OpenVaultInventoryMenu(data)
 	if data.job == ESX.PlayerData.job.name or data.job == "vault" then
-		print(data.needItemLicense)
 		vaultType = data
-		ESX.TriggerServerCallback(
-			"monster_vault:getVaultInventory",
-			function(inventory)
-				if not inventory then
-					exports["mythic_notify"]:SendAlert("error", "Not have license card")
-				else
-					TriggerEvent("monster_inventoryhud:openVaultInventory", inventory)
-				end
-			end,
+		ESX.TriggerServerCallback("monster_vault:getVaultInventory", function(inventory)
+			if not inventory then
+				Config.ClientNotification({ text = "Not have license card" })
+				ESX.UI.Menu.CloseAll()
+				local elements = {
+					{
+						label = "ยืนยัน",
+						value = true
+					},
+					{
+						label = "ยกเลิก",
+						value = false
+					}
+				}
+				ESX.UI.Menu.Open("default", GetCurrentResourceName(), "confirm_rent_vault", {
+					title = "ต้องใช้เสียเงินเพื่อใช้ตู้เซฟใช่หรือไม่",
+					align = "center",
+					elements = elements
+				}, function(menuData, menu)
+					local value = menuData.current.value
+					if (value) then
+						ESX.TriggerServerCallback("monster_vault:rental", function(bSuccess)
+							if (bSuccess) then
+								OpenVaultInventoryMenu(data)
+							end
+						end, data.id)
+					end
+					menu.close()
+				end, function(menuData, menu)
+					menu.close()
+				end)
+			else
+				TriggerEvent("monster_inventoryhud:openVaultInventory", inventory)
+			end
+		end,
 			data
 		)
 	else
-		exports["mythic_notify"]:SendAlert("error", "you not have permission for this job", 5500)
+		Config.ClientNotification({ text = "you not have permission for this job" })
 		Citizen.Wait(8000)
 	end
 end
@@ -62,13 +87,13 @@ Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(0)
 		local coords = GetEntityCoords(PlayerPedId())
-		for _, v in pairs(Config.Vault) do
+		for k, v in pairs(Config.Vault) do
 			local dist = GetDistanceBetweenCoords(coords, v.coords, true)
 			if dist < 2 then
 				ESX.ShowHelpNotification("Press E to open vault")
 
 				if IsControlJustReleased(0, Keys["E"]) then
-					OpenVaultInventoryMenu({ job = v.type, needItemLicense = v.needItemLicense, InfiniteLicense = v.InfiniteLicense })
+					OpenVaultInventoryMenu({ id = k, job = v.type, needItemLicense = v.needItemLicense, InfiniteLicense = v.InfiniteLicense })
 				else
 					break
 				end

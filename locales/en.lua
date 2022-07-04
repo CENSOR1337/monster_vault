@@ -7,4 +7,5 @@ Locales["en"] = {
   ["amount_invalid"] = "invalid amount",
   ["item_on_blacklisted"] = "this item is blacklisted",
   ["item_is_not_vaultable"] = "you cannot put item into vault",
+  ["time_remain"] = "time remaining %2.f mins",
 }

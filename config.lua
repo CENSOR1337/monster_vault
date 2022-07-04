@@ -5,9 +5,13 @@ Config.Vault = {
 	{
 		type = "vault",
 		coords = vec(1732.7111, 3313.9900, 40.2235, 16.7298),
-		needItemLicense = "taeratto_blackcard", --'licence_vault' -- If you don't want to use items Allow you to leave it blank or needItemLicense = nil
+		needItemLicense = "card_vault", --'licence_vault' -- If you don't want to use items Allow you to leave it blank or needItemLicense = nil
 		InfiniteLicense = true, -- Should one License last forever?
-		model = "p_v_43_safe_s"
+		model = "p_v_43_safe_s",
+		rental = {
+			price = 500,
+			time = 600 -- seconds
+		}
 	},
 	{
 		type = "police",

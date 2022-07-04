@@ -1,4 +1,9 @@
 local Blacklisted = {}
+local VaultRentalRemaining = {}
+
+for key, _ in pairs(Config.Vault) do
+	VaultRentalRemaining[key] = {}
+end
 
 for key, namelist in pairs(Config.Blacklisted) do
 	local tableEntry = Blacklisted[key]
@@ -155,7 +160,6 @@ RegisterNetEvent("monster_vault:putItem", function(--[[owner,--]] job, type, ite
 					inventory.addItem(item, count)
 					TriggerClientEvent("monster_vault:notifications", _source, { type = "success", text = _U("have_deposited", count, inventory.getItem(item).label), length = 7500 })
 				end)
-				-- print("monster_vault:putItem")
 			elseif job == "vault" then
 				TriggerEvent("esx_addoninventory:getInventory", "vault", xPlayerOwner.identifier, function(inventory)
 					xPlayer.removeInventoryItem(item, count)
@@ -226,7 +230,7 @@ RegisterNetEvent("monster_vault:putItem", function(--[[owner,--]] job, type, ite
 end)
 
 ESX.RegisterServerCallback("monster_vault:getVaultInventory", function(source, cb, item, refresh)
-	-- local xPlayer    = ESX.GetPlayerFromIdentifier(owner)
+	local playerSource = source
 	local xPlayer = ESX.GetPlayerFromId(source)
 	local xItem
 	if item.needItemLicense ~= "" or item.needItemLicense ~= nil then
@@ -234,26 +238,30 @@ ESX.RegisterServerCallback("monster_vault:getVaultInventory", function(source, c
 	else
 		xItem = nil
 	end
+
 	local refresh = refresh or false
 
 	local blackMoney = 0
 	local items = {}
 	local weapons = {}
 
-	if not refresh and (item.needItemLicense ~= "" or item.needItemLicense ~= nil) and xItem ~= nil and xItem.count < 1 then
-		-- if xItem.count < 1 then
-		cb(false)
-		-- end
-		-- return
-	elseif not item.InfiniteLicense and not refresh and xItem ~= nil and xItem.count > 0 then
-		-- if not item.InfiniteLicense then
-		xPlayer.removeInventoryItem(item.needItemLicense, 1)
-		-- end
+
+	local timeRental = VaultRentalRemaining[item.id][xPlayer.identifier]
+	local bRentalActive = timeRental and timeRental >= os.time()
+	if not (bRentalActive) then
+		VaultRentalRemaining[item.id][xPlayer.identifier] = nil
+		timeRental = nil
 	end
 
-	-- if item.job == xPlayer.job.name then
-	-- 	print('u job: '..xPlayer.job.name)
-	-- end
+	if not (bRentalActive) then
+		if not refresh and (item.needItemLicense ~= "" or item.needItemLicense ~= nil) and xItem ~= nil and xItem.count < 1 then
+			cb(false)
+		elseif not item.InfiniteLicense and not refresh and xItem ~= nil and xItem.count > 0 then
+			xPlayer.removeInventoryItem(item.needItemLicense, 1)
+		end
+	else
+		TriggerClientEvent("monster_vault:notifications", playerSource, { type = "error", text = _U("time_remain", (timeRental - os.time()) / 60), length = 5500 })
+	end
 
 	local typeVault = ""
 	local society = false
@@ -304,4 +312,23 @@ ESX.RegisterServerCallback("monster_vault:getVaultInventory", function(source, c
 			job        = item.job
 		})
 	end
+end)
+
+ESX.RegisterServerCallback("monster_vault:rental", function(source, cb, vaultId)
+	local vaultInfo = Config.Vault[vaultId]
+	if not (vaultInfo and VaultRentalRemaining[vaultId]) then
+		return
+	end
+	local xPlayer = ESX.GetPlayerFromId(source)
+	local bSuccess = false
+	if (xPlayer) then
+		local rentPrice = vaultInfo.rental.price
+		local bHashEnoughMoney = xPlayer.getAccount("money").money >= rentPrice
+		if (bHashEnoughMoney) then
+			xPlayer.removeAccountMoney("money", rentPrice)
+			VaultRentalRemaining[vaultId][xPlayer.identifier] = os.time() + vaultInfo.rental.time
+			bSuccess = true
+		end
+	end
+	cb(bSuccess)
 end)
