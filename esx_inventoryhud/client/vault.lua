@@ -8,7 +8,7 @@ AddEventHandler(
 )
 
 function refreshVaultInventory()
-    data = exports['monster_vault']:getMonsterVaultLicense()
+    data = exports["monster_vault"]:getMonsterVaultLicense()
     ESX.TriggerServerCallback(
         "monster_vault:getVaultInventory",
         function(inventory)
@@ -117,17 +117,17 @@ RegisterNUICallback(
 
             if data.item.type == "item_weapon" then
                 count = GetAmmoInPedWeapon(PlayerPedId(), GetHashKey(data.item.name))
-				TriggerServerEvent("monster_vault:putItem", --[[ESX.GetPlayerData().identifier,--]] vaultType, data.item.type, data.item.name, count)
+                TriggerServerEvent("monster_vault:putItem", --[[ESX.GetPlayerData().identifier,--]] vaultType, data.item.type, data.item.name, count)
             else
                 if data.number > data.item.count or data.number == 0 then
                     count = tonumber(data.item.count)
                 else
                     count = tonumber(data.number)
                 end
-				TriggerServerEvent("monster_vault:putItem", --[[ESX.GetPlayerData().identifier,--]] vaultType, data.item.type, data.item.name, count)
+                TriggerServerEvent("monster_vault:putItem", --[[ESX.GetPlayerData().identifier,--]] vaultType, data.item.type, data.item.name, count)
             end
 
-            
+
         end
 
         Wait(250)
